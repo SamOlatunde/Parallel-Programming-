@@ -12,6 +12,7 @@
 #include<stdio.h>
 #define _USE_MATH_DEFINES 
 #include<math.h>
+#include"timer.h"
 
 
 #define N 1024
@@ -58,7 +59,19 @@ int main()
         timeDomain[i].imag = 0.0;
     }
     
-   calcCooleyTukey(FFT,timeDomain);
+    double tstart = 0.0, tend= 0.0, telapsed = 0.0; 
+   
+    
+    GET_TIME(tstart); // get time right before entering routine 
+    calcCooleyTukey(FFT,timeDomain);
+    GET_TIME(tend); // time right after routine 
+
+    // compute time elapsed
+    telapsed = tend-tstart; 
+
+
+   
+    printf("The routine took %f microseconds \n\n", telapsed);
 
    printf("TOTAL PROCESSED SAMPLES: %d\n", N);
     printf("===========================================\n");
@@ -78,10 +91,9 @@ int main()
 
 //*******************************************************************
 // Name::calcCooleyTukey()
-// Parameters: 2 complexNum Pointers, and 1 int 
-// A discussion of what the method/function does and required
-// parameters as well as return value.
-//CODE MUST HAVE COMMENTS, GOOD AND INFORMATIVE COMMENTS [-10 IF IGNORED]
+// Parameters: 2 complexNum Pointers
+// This function computes the real and imaginary components of the 
+// of the fft cooeficients 
 //********************************************************************
 void calcCooleyTukey(struct complexNum * FFT, struct complexNum * timeDomain)
 {
@@ -170,12 +182,12 @@ void calcCooleyTukey(struct complexNum * FFT, struct complexNum * timeDomain)
         }
 
 
-      FFT[k].real = real;
-      FFT[k].imag = imag;
+        FFT[k].real = real;
+        FFT[k].imag = imag;
 
-    
-     FFT[k + (N/2)].real = real2ndHalf;
-    FFT[k + (N/2)].imag = imag2ndHalf;
+        
+        FFT[k + (N/2)].real = real2ndHalf;
+        FFT[k + (N/2)].imag = imag2ndHalf;
     }
 
 }
