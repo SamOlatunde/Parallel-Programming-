@@ -12,7 +12,7 @@
 #include<stdio.h>
 #define _USE_MATH_DEFINES 
 #include<math.h>
-#include<mpi.h>
+
 
 #define N 1024
 
@@ -49,6 +49,7 @@ int main()
     timeDomain[7].real = 4.3;
     timeDomain[7].imag = 4.1;
 
+   
 
     // initializing the other entries of time domain to 0    
     for (int i = 8; i < N; i++)
@@ -56,15 +57,76 @@ int main()
         timeDomain[i].real = 0;
         timeDomain[i].imag = 0;
     }
- 
+    
+   calcCooleyTukey(FFT,timeDomain);
+
+   printf("TOTAL PROCESSED SAMPLES: %d\n", N);
+    printf("===========================================\n");
+    printf("XR[0]: %f\t", FFT[0].real);
+    printf("XI[0]: %f\n", FFT[0].imag);
+    printf("===========================================\n");
+    for(int i =1; i < 10; i++)
+    {
+       printf("XR[%d]: %f\tXI[%d]: %f\n", i, FFT[i].real, i, FFT[i].imag);// %f\t\t", FFT[0].real);
+    }
+    printf("===========================================\n\n");
     
     return 0; 
 }
 
 
+
+//*******************************************************************
+// Name::calcCooleyTukey()
+// Parameters: 2 complexNum Pointers, and 1 int 
+// A discussion of what the method/function does and required
+// parameters as well as return value.
+//CODE MUST HAVE COMMENTS, GOOD AND INFORMATIVE COMMENTS [-10 IF IGNORED]
+//********************************************************************
 void calcCooleyTukey(struct complexNum * FFT, struct complexNum * timeDomain)
 {
 
- 
+   double even_real, even_imag;
+   double odd_real, odd_imag;
+   double theta;
+   double twiddle_real, twiddle_imag;
+   double sine, cosine;
+
+    for (int k = 0.0; k < N/2; k++)
+    {
+        // initiallizing componenets
+        even_real = even_imag = 0.0;
+        odd_real = odd_imag = 0.0;
+        theta = 0.0;
+    
+       
+        twiddle_real = (cos ((2 * M_PI * k))/N);
+        twiddle_imag = -1 * (sin ((2 * M_PI * k)/N));
+
+        for( int n = 0.0; n < N/2; n++)
+        {
+            theta = ((2 * M_PI * n * k)/ (N/2));
+            
+            cosine = cos(theta);
+            sine =  sin (theta);
+    
+            even_real +=(timeDomain[(2 *n)].real * cosine ) + (timeDomain[(2* n)].imag * sine);
+            even_imag += ((-1 *(timeDomain[(2 * n) ].real)) * sine) + (timeDomain[2 * n].imag * cosine);
+
+            odd_real +=(timeDomain[(2 *n + 1)].real * cosine ) + (timeDomain[(2* n+1)].imag * sine);
+            odd_imag += ((-1 *(timeDomain[(2 * n+1) ].real)) * sine) + (timeDomain[2 * n +1].imag * cosine);
+        }   
+        
+        // compute coefficients for 1st half 
+        FFT[k].real = even_real + (( twiddle_real * odd_real) - (twiddle_imag * odd_imag));
+        FFT[k].imag = even_imag + (( twiddle_real * odd_imag) + (twiddle_imag * odd_real));
+
+
+        // compute coefficients for 2st half 
+        FFT[k + (N/2)].real = even_real - (( twiddle_real * odd_real) - (twiddle_imag * odd_imag));
+        FFT[k + (N/2)].imag = even_imag - (( twiddle_real * odd_imag) + (twiddle_imag * odd_real));
+        
+    }
+    
 
 }
