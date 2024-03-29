@@ -37,7 +37,7 @@ module list
 pwd
 date
 
-gcc Olatunde_Orru_SeqVer.c       -o a.out
+gcc Olatunde_Orru_SeqVer_16384.c       -o a.out
 
 # Launch serial code...
 ./a.out       # Do not use ibrun or any other MPI launcher
