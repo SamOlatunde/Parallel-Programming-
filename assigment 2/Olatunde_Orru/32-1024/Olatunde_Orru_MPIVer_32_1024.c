@@ -44,10 +44,23 @@ int main(void) {
     struct complexNum FFT[N];
     struct complexNum timeDomain[N];
 
-    // Hard Coding first 8 entries of time domain 
+   //Hard Coding first 8 entries of time domain 
     timeDomain[0].real = 3.6;
     timeDomain[0].imag = 2.6;
-    // Code for initializing other entries of timeDomain...
+    timeDomain[1].real = 2.9;
+    timeDomain[1].imag = 6.3;
+    timeDomain[2].real = 5.6;
+    timeDomain[2].imag = 4;
+    timeDomain[3].real = 4.8;
+    timeDomain[3].imag = 9.1;
+    timeDomain[4].real = 3.3;
+    timeDomain[4].imag = 0.4;
+    timeDomain[5].real = 5.9;
+    timeDomain[5].imag = 4.8;
+    timeDomain[6].real = 5;
+    timeDomain[6].imag = 2.6;
+    timeDomain[7].real = 4.3;
+    timeDomain[7].imag = 4.1;
 
     // Initializing the other entries of time domain to 0    
     for (int i = 8; i < N; i++) {
@@ -85,6 +98,7 @@ int main(void) {
         printf("===========================================\n\n");
     }
 
+    MPI_Type_free(&MPI_COMPLEXNUM);
     MPI_Finalize();
     
     return 0; 
@@ -100,26 +114,22 @@ int main(void) {
 // of the fft cooeficients 
 //********************************************************************
 void calcCooleyTukey(struct complexNum *FFT, struct complexNum *timeDomain, int Size, int offset) {
-    double real, imag, theta, real2ndHalf, imag2ndHalf, theta2ndHalf;
+    double real, imag, theta;
 
     for (int k = 0; k < Size; k++) {
         real = imag = 0.0;
-        real2ndHalf = imag2ndHalf = 0.0;
+       
 
         for(int n = 0; n < N; n ++) {
             theta = ((2 * M_PI) * n * (k + offset)) / N;
             real += (timeDomain[n].real * cos(theta)) + (timeDomain[n].imag * sin(theta));
             imag += (-(timeDomain[n].real) * sin(theta)) + (timeDomain[n].imag * cos(theta));
 
-            theta2ndHalf = (2 * M_PI * n * (k + (Size / 2) + offset)) / N;
-            real2ndHalf += (timeDomain[n].real * cos(theta2ndHalf)) + (timeDomain[n].imag * sin(theta2ndHalf));
-            imag2ndHalf += (-(timeDomain[n].real) * sin(theta2ndHalf)) + (timeDomain[n].imag * cos(theta2ndHalf));
+
         }
 
         FFT[k].real = real;
         FFT[k].imag = imag;
 
-        FFT[k + (Size / 2)].real = real2ndHalf;
-        FFT[k + (Size / 2)].imag = imag2ndHalf;
     }
 }

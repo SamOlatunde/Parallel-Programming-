@@ -39,7 +39,11 @@ module list
 pwd
 date
 
-mpicc Olatunde_Orru_MPIVer_16_16384.c  -o myexe 
+mpicc Olatunde_Orru_MPIVer_16_16384.c  -o myexe -lm
 
 # Launch MPI code... 
-ibrun ./myexe         # Use ibrun instead of mpirun or mpiexec
+for ((i=1;i<3;i++))
+do 
+	echo "Executing code run $i"
+	ibrun ./myexe         # Use ibrun instead of mpirun or mpiexec
+done
