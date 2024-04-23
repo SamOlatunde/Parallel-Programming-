@@ -13,9 +13,8 @@
 // protected by a mutex. Upon completion, it prints the summation
 // of elements in c and f, along with the dot product, showcasing
 // the efficiency of parallel processing in arrays.
-
-
- 
+// compile: gcc OlatundeA4Phreads.c -o para.out -lpthread
+// execute: ./para.out
 
 #include<stdio.h>
 #include<pthread.h>
