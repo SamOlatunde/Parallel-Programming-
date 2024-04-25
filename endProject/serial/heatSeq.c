@@ -80,8 +80,8 @@ int main()
    tElapsed = tStop - tStart;
    
    
-   printf("Data Size: %d \n", N * N);
-   printf("The code to be timed took %e seconds\n", tElapsed);
+   printf("Data Order: %d \n", N);
+   printf("The code to be timed took %e seconds\n\n", tElapsed);
    
    //printf("checkSum: %f\n", checkSum(h));
    //print(h);
