@@ -1,6 +1,6 @@
 //*****************************************************************
 // End of Semester Project 
-// Name: Samuel Olatunde , and Sunil Rasaily 
+// Name: Samuel Olatunde , and Michelle Orru
 // GPU Programming Date: Date of Submission (11/28/2022)
 //******************************************************************
 // Computes the temparture distrubtion of a square metal sheet with 
@@ -8,17 +8,16 @@
 //******************************************************************
 #include<stdio.h>
 #include"mpi.h"
-#include"timer.h"
 #include<stdlib.h>
-#include<cmath>
+#include<math.h>
 
-
+#define N 8
 
 //error tolerance 
 const float eT  = 0.00001;
 
 // limit for the max number of iterations
-#define limit 15
+#define limit 100
 
 double checkSum(float * h, int N)
 {
@@ -64,6 +63,7 @@ typedef struct
   int my_row; //my row number 
   int my_col;// my column number
   int my_rank;  // my rank in the grid communicator 
+  
   // MPI_Comm first_row;
   // MPI_Comm last_row;
   // MPI_Comm first_column;
@@ -86,33 +86,35 @@ int main(int argc, char ** argv)
     GRID_INFO_TYPE grid;
     Setup_grid(&grid);
     int iteration;
-    int source;
-    int dest;
-    int tag=23;
+    //int source;
+    //int dest;
+    //int tag=23;
     MPI_Status status;
     int i = grid.my_row, j = grid.my_col;
 
     // variable declarations
    float /** h,*/ *g ;
-   float w =0.0, x = 0.0, y = 0.0, z = 0.0;
-  
+   //float w =0.0, x = 0.0, y = 0.0, z = 0.0;
+   
    // Allocate Dynamic Memory in host 
   // h = (float *) malloc ((N*N) * sizeof(float));
-   g = (float *) malloc((grid.p) * sizeof(float));
+   g = (float *) malloc(N * N * sizeof(float));
+   
+   float * local_g = (float *) malloc(((N*N)/grid.p));
 
    float edgeTemp =70.5;//300;
-   double tStart = 0.0, tStop = 0.0, tElapsed = 0.0;
+   //double tStart = 0.0, tStop = 0.0, tElapsed = 0.0;
     
    //initialize matrix
    initMetalPlate(/*h,*/g, edgeTemp, grid.q);
    
    // time computation
-   GET_TIME(tStart);
+  // GET_TIME(tStart);
 
    // need to find a way to test for convergence
 
     
-    if (grid.first_row) 
+    /*if (grid.first_row) 
     {
       w = edgeTemp;//top_value;
     }
@@ -148,7 +150,7 @@ int main(int argc, char ** argv)
       z = g[(i*grid.q) + (j+1)];
     }
 
-    iteration = 0; /* for process i,j */
+    iteration = 0; // for process i,j 
 
     do
      {
@@ -163,26 +165,33 @@ int main(int argc, char ** argv)
         if (!grid.last_row) MPI_Recv(&x,1, MPI_FLOAT,((i+1) * grid.q) + j, tag, grid.comm,&status);
         if (!grid.first_column) MPI_Recv(&y,1, MPI_FLOAT, (i * grid.q) + (j-1), tag, grid.comm,&status);
         if (!grid.last_column) MPI_Recv(&z,1, MPI_FLOAT, (i * grid.q) + (j+1), tag, grid.comm,&status);
-      } while (/*(!converged(i,j)) &&*/ (iteration < limit));
+      } while ((iteration < limit));
     //Send(&g, &i, &j, &iteration, P_Master);
    
   //Need help with partitioning 
-   
+   */
+
+   if(grid.my_rank == 0)
+   {
 
     //  printf("g: \n");
-    //  print(g);
-
+    printf("Size: %d\n", grid.q);
+    print(g, grid.q);
+   }
+    
+    if()
+   
     //  printf("h: \n");
     //  print(h);
     
    //calcIntTempDistribution(h,g);
-   GET_TIME(tStop);
+  // GET_TIME(tStop);
    
 
    // Compute how long it took
-   tElapsed = tStop - tStart;
+   //tElapsed = tStop - tStart;
    
-   printf("The code to be timed took %e seconds\n", tElapsed);
+   //printf("The code to be timed took %e seconds\n", tElapsed);
    //printf("checkSum: %f\n", checkSum(h));
    //print(h);
 
@@ -254,7 +263,7 @@ void Setup_grid(GRID_INFO_TYPE * grid)
 // Calculates the temparture of interior point by find the avergae 
 // of the four adjacent points 
 //********************************************************************
-void calcIntTempDistribution(float *h,float *g, int N)
+void calcIntTempDistribution(float *local_g,float *g, int local_N)
 {
    int iteration = 0;
    
@@ -263,12 +272,15 @@ void calcIntTempDistribution(float *h,float *g, int N)
    do 
    {
       //compute averages
-      for (int i = 1; i < (N-1); i++)
+      for (int i = 0; i < local_N; i++)
       {
-        for(int j = 1; j < (N-1); j++)
+        for(int j = 0; j < local_N; j++)
         {
-            g[i* N + j] = 0.25 * (h[(i-1) * N + j] + h[(i+1) * N + j]
-                                       +h[i* N + j-1]+h[i* N + j+1]);
+            if ((i*row != 0 && i != (N - 1) && j != 0 && j != (N - 1))
+                {
+                    local_g[i * local_N + j] = 0.25 * (h[(i - 1) * N + j] + h[(i + 1) * N + j] +
+                                            h[i * N + j - 1] + h[i * N + j + 1]);
+                }
         }
       }
       

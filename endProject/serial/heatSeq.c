@@ -1,6 +1,6 @@
 //*****************************************************************
 // End of Semester Project 
-// Name: Samuel Olatunde , and Sunil Rasaily 
+// Name: Samuel Olatunde , and Michelle Orru 
 // GPU Programming Date: Date of Submission (11/28/2022)
 //******************************************************************
 // Computes the temparture distrubtion of a square metal sheet with 
@@ -14,8 +14,8 @@
 //error tolerance 
 const float eT  = 0.00001;
 
-// data size
-#define N  8
+// data order
+#define N  4
 
 // limit for the max number of iterations
 #define limit 100
@@ -69,7 +69,7 @@ int main()
 
 //    print(h);
 //    printf("\n\n\n smas \n\n\n");
-//    print(g);
+ print(g);
 
    // time computation
    GET_TIME(tStart);
@@ -80,9 +80,10 @@ int main()
    tElapsed = tStop - tStart;
    
    
-   printf("Data Order: %d \n", N);
-   printf("The code to be timed took %e seconds\n\n", tElapsed);
+   printf("\n\n\nData Order: %d \n", N);
+   printf("The code to be timed took %e microseconds\n\n", tElapsed);
    
+      print(g);
    //printf("checkSum: %f\n", checkSum(h));
    //print(h);
 
