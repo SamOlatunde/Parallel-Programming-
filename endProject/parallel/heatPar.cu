@@ -20,7 +20,7 @@ namespace cg = cooperative_groups;
 const float eT  = 0.00001;
 
 // data size
-#define N  32
+#define N  64
 
 // limit for the max number of iterations
 #define limit 100
@@ -187,8 +187,6 @@ __global__ void calcIntTempDistribution(float * h,float *g)
 
      iteration++;
    }while(Continue == 1 && iteration < limit);
-   //printf("Blah");
-   //printf("%d\n", iteration);
 }
 
 //*******************************************************************
